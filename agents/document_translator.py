@@ -42,12 +42,9 @@ class DocumentTranslator(OssBaseAgent):
     async def translate(
         self,
         document_content: str,
-        source_language: str,
         target_language: str,
-        document_type: str = "general"
     ) -> DocumentTranslationOutput:
         logger.info(f"Translating document from {source_language} to {target_language}")
-        logger.debug(f"Document type: {document_type}")
         logger.debug(f"Content length: {len(document_content)} characters")
         
         full_prompt = PROMPT.format(
