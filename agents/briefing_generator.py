@@ -2,6 +2,7 @@ from agents.base_agent import OssBaseAgent
 from typing import Optional
 from pydantic import BaseModel
 from utils.logger import Logger
+import json
 
 logger = Logger(__name__)
 
@@ -58,7 +59,6 @@ class BriefingGenerator(OssBaseAgent):
         logger.debug(f"Company: {company_profile.get('trade_name', 'Unknown')}")
         logger.debug(f"Company ID: {company_profile.get('company_id', 'Unknown')}")
         
-        import json
         company_profile_str = json.dumps(company_profile, indent=2)
         logger.debug(f"Profile data size: {len(company_profile_str)} characters")
         
@@ -71,8 +71,8 @@ class BriefingGenerator(OssBaseAgent):
             result = await self.generate(
                 input=full_prompt,
                 schema=BriefingDocumentOutput,
-                think=True,
-                temperature=0.4
+                think=False,
+                temperature=0.4,
             )
             
             logger.info(f"Briefing document generated successfully")
@@ -84,9 +84,6 @@ class BriefingGenerator(OssBaseAgent):
             
             for i, section in enumerate(result.sections, 1):
                 logger.debug(f"Section {i}: {section.heading} ({len(section.content)} chars)")
-            
-            if result.risk_level in ["high", "critical"]:
-                logger.warning(f"High risk level detected: {result.risk_level}")
             
             logger.info(f"Key findings summary:")
             for i, finding in enumerate(result.key_findings, 1):
@@ -110,7 +107,7 @@ if __name__ == "__main__":
         logger.info(f"Log level set to: {log_level}")
         
         generator = BriefingGenerator(
-            model_name="meta-llama/Llama-3.1-8B-Instruct",
+            model_name="meta-llama/Llama-3.3-70B-Instruct",
         )
         
         print("=" * 80)
