@@ -513,19 +513,6 @@ The agent frequently makes tool calls with incorrect, malformed, or missing para
    - Use a focused prompt specifically for parameter extraction
    - Validate extracted parameters against tool schema before calling
    - Return structured output (JSON) that matches tool requirements exactly
-2. **Schema-Aware Validation**: Implement strict validation:
-   - Define clear JSON schemas for each tool's input parameters
-   - Use Pydantic models or similar validation libraries
-   - Provide clear error messages when validation fails
-   - Auto-correct common formatting issues (e.g., string to int conversion)
-3. **Few-Shot Examples**: Enhance prompts with examples:
-   - Show correct parameter extraction for each tool
-   - Include edge cases and common mistakes to avoid
-   - Demonstrate proper handling of missing or ambiguous data
-4. **Structured Output Enforcement**: Use function calling features:
-   - Leverage OpenAI's function calling or similar structured output modes
-   - Force the model to output valid JSON matching the schema
-   - Reduce hallucination by constraining output format
 
 #### Issue 4. Add Prompt Injection Alert System
 
