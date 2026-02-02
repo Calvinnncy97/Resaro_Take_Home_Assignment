@@ -134,13 +134,6 @@ class ResearchAssistant(OssBaseAgent):
                     description="The company profile data containing all relevant information",
                     required=True
                 ),
-                AgentParameter(
-                    name="briefing_type",
-                    type=ParameterType.STRING,
-                    description="Type of briefing (e.g., executive_summary, risk_assessment, due_diligence)",
-                    required=False,
-                    default="executive_summary"
-                )
             ],
             agent_type="analysis",
             callable_func=self.briefing_generator.generate_briefing

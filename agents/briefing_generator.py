@@ -20,15 +20,13 @@ Your job is to:
 - Highlight any red flags or areas of concern
 - Format the output in a professional, executive-ready style
 
-Return your response as a JSON object with the following fields:
-- title: The title of the briefing document
-- executive_summary: A concise 2-3 paragraph summary
-- sections: A list of section objects, each with "heading" and "content" fields
-- key_findings: A list of the most important findings (3-5 items)
-- recommendations: A list of actionable recommendations (3-5 items)
-- risk_level: Overall risk assessment (low, medium, high, critical)
-
-Briefing Type: {briefing_type}
+# Return your response as a JSON object with the following fields:
+# - title: The title of the briefing document
+# - executive_summary: A concise 1 paragraph summary
+# - sections: A list of section objects, each with "heading" and "content" fields
+# - key_findings: A list of the most important findings (3-5 items)
+# - recommendations: A list of actionable recommendations (3-5 items)
+# - risk_level: Overall risk assessment (low, medium, high, critical)
 
 Company Profile:
 {company_profile}
@@ -55,9 +53,8 @@ class BriefingGenerator(OssBaseAgent):
     async def generate_briefing(
         self,
         company_profile: dict,
-        briefing_type: str = "executive_summary"
     ) -> BriefingDocumentOutput:
-        logger.info(f"Generating {briefing_type} briefing document")
+        logger.info("Generating briefing document")
         logger.debug(f"Company: {company_profile.get('trade_name', 'Unknown')}")
         logger.debug(f"Company ID: {company_profile.get('company_id', 'Unknown')}")
         
@@ -66,7 +63,6 @@ class BriefingGenerator(OssBaseAgent):
         logger.debug(f"Profile data size: {len(company_profile_str)} characters")
         
         full_prompt = PROMPT.format(
-            briefing_type=briefing_type,
             company_profile=company_profile_str
         )
         logger.debug(f"Prompt length: {len(full_prompt)} characters")
@@ -154,12 +150,10 @@ if __name__ == "__main__":
         print("Company Profile:")
         print(json.dumps(mock_company_profile, indent=2))
         print()
-        print("Briefing Type: due_diligence")
         print()
         
         result = await generator.generate_briefing(
             company_profile=mock_company_profile,
-            briefing_type="due_diligence"
         )
         
         print("=" * 80)
