@@ -21,7 +21,7 @@
   - [Performance Evaluation Metrics](#performance-evaluation-metrics)
   - [Evaluation Report](#evaluation-report)
   - [Proposed Fixes and Improvements](#proposed-fixes-and-improvements)
-  
+
 
 # Repo Setup
 
@@ -407,7 +407,7 @@ Accuracy, security, and performance evaluation metrics are derived from the simu
 - System successfully completed within 10 max iterations.
 
 **What Went Wrong**
-- Retrieval Accuracy: At the `company_finder` step, the agent found the wrong company ("CloudNine Health AG" instead of "CloudNine Digital"), consequently returning the wrong company.
+- **Retrieval Accuracy**: At the `company_finder` step, the agent found the wrong company ("CloudNine Health AG" instead of "CloudNine Digital"), consequently returning the wrong company.
 - **Initial Database Miss**: Even with a simple base case, the agent failed to find the company in the database in the first query. 
 
 **Where risk exposures might occur**
