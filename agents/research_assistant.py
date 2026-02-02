@@ -254,6 +254,59 @@ class ResearchAssistant(OssBaseAgent):
         
         return extraction
     
+    def _format_research_step(
+        self,
+        step_number: int,
+        reasoning: str,
+        action: str,
+        action_type: str,
+        action_input: Dict[str, Any],
+        result: Dict[str, Any]
+    ) -> str:
+        """
+        Format a research step with detailed information.
+        
+        Args:
+            step_number: The step number
+            reasoning: The reasoning for this step
+            action: The action/tool/agent name
+            action_type: Either "Agent" or "Tool"
+            action_input: The input parameters
+            result: The output result
+            
+        Returns:
+            Formatted string with step details
+        """
+        lines = []
+        lines.append(f"{'='*80}")
+        lines.append(f"STEP {step_number}")
+        lines.append(f"{'='*80}")
+        lines.append("")
+        lines.append(f"REASONING:")
+        lines.append(f"  {reasoning}")
+        lines.append("")
+        lines.append(f"{action_type.upper()} USED: {action}")
+        lines.append("")
+        lines.append(f"INPUT:")
+        for key, value in action_input.items():
+            value_str = str(value)
+            if len(value_str) > 200:
+                value_str = value_str[:200] + "..."
+            lines.append(f"  - {key}: {value_str}")
+        lines.append("")
+        lines.append(f"OUTPUT:")
+        if "error" in result:
+            lines.append(f"  ERROR: {result['error']}")
+        else:
+            result_str = json.dumps(result, indent=2)
+            if len(result_str) > 500:
+                result_str = result_str[:500] + "\n  ... (truncated)"
+            for line in result_str.split('\n'):
+                lines.append(f"  {line}")
+        lines.append("")
+        
+        return "\n".join(lines)
+    
     async def research_and_generate_briefing(
         self,
         query: str,
@@ -311,6 +364,7 @@ class ResearchAssistant(OssBaseAgent):
                 
                 if step.action == "FINISH" or step.is_complete:
                     logger.info("ReAct loop completed - FINISH action received")
+                    research_steps.append(f"Step {iteration + 1}: Task completed - {step.reasoning}")
                     break
                 
                 result = await self._execute_action(step.action, step.action_input)
@@ -319,6 +373,16 @@ class ResearchAssistant(OssBaseAgent):
                 observation = f"{action_type}: {step.action}\nResult: {json.dumps(result, indent=2)[:500]}"
                 observations.append(observation)
                 logger.debug(f"Observation: {observation}")
+                
+                step_detail = self._format_research_step(
+                    iteration + 1,
+                    step.reasoning,
+                    step.action,
+                    action_type,
+                    step.action_input,
+                    result
+                )
+                research_steps.append(step_detail)
                 
                 if step.action == "company_finder" and "error" not in result:
                     company_profile = result
