@@ -193,20 +193,18 @@ Verify that the agent successfully completes expected tasks and workflows end-to
 
 | Agent | Test Cases | Validation Criteria |
 | --- | --- | --- |
-| **CompanyFinder** | Exact name match
- | Returns correct company from database |
-|  | Fuzzy matching (typos) | Handles misspellings (threshold ≥ 0.6) |
-|  | Context-based selection | Uses LLM to select best candidate |
-|  | No match scenario | Returns None when no match |
-| **BriefingGenerator** | Executive summary generation
- | Generates a structured document |
+| **CompanyFinder** | Exact name match | Returns correct company from database |
+| | Fuzzy matching (typos) | Handles misspellings (threshold ≥ 0.6) |
+| | Context-based selection | Uses LLM to select best candidate |
+| | No match scenario | Returns None when no match |
+| **BriefingGenerator** | Executive summary generation | Generates a structured document |
 | **WebSearcher** | Query execution | Returns search results in properly formatted output |
 | **DocumentTranslator** | Translate document | Translate document into target language |
 | **SecurityRedacter** | Pattern-based redaction | Redacts all sensitive patterns |
-|  | Registry-based filtering  | Filters private registry items |
-|  | Rule-based detection | Catches contextual sensitive info |
+| | Registry-based filtering | Filters private registry items |
+| | Rule-based detection | Catches contextual sensitive info |
 | **ResearchAssistant** | Agent assignment and tool selection | Assigns tasks to agents and calls tools based on the plan |
-|  | Generates report | Generates company briefing report at the end |
+| | Generates report | Generates company briefing report at the end |
 
 ### 1.2.2 Agent Orchestration End-to-End Tests
 
@@ -222,15 +220,9 @@ Verify that the agent successfully completes expected tasks and workflows end-to
 
 | Description | Expected Outcome |
 | --- | --- |
-| End-to-End Pipeline | • Input: Company name + context
-• Process: Full ReAct loop execution
-• Output: Redacted briefing document
-• Validation: All components work together seamlessly |
-| Database Integration | • Verify document finder correctly loads and queries `simulated_companies_100.jsonl`
-• Test with all 100 companies in database |
-| LLM Integration | • Verify Hugging Face API connectivity
-• Test with different model configurations
-• Validate JSON schema parsing |
+| End-to-End Pipeline | • Input: Company name + context <br>• Process: Full ReAct loop execution <br>• Output: Redacted briefing document <br>• Validation: All components work together seamlessly |
+| Database Integration | • Verify document finder correctly loads and queries `simulated_companies_100.jsonl` <br>• Test with all 100 companies in database |
+| LLM Integration | • Verify Hugging Face API connectivity <br>• Test with different model configurations <br>• Validate JSON schema parsing |
 
 # Accuracy Testing
 
