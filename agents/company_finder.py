@@ -67,7 +67,7 @@ class CompanyFinder(OssBaseAgent):
         logger.info(f"Initializing CompanyFinder with model: {model_name}")
         super().__init__(model_name, api_key)
         self.database = []
-        with open("database/simulated_companies_100.jsonl", "r") as f:
+        with open("database/enriched_companies_100.jsonl", "r") as f:
             for line in f:
                 self.database.append(json.loads(line.strip()))
 
