@@ -13,6 +13,20 @@ import json
 logger = Logger(__name__)
 
 
+QUERY_EXTRACTION_PROMPT = """
+You are a query analyzer that extracts company information from user queries.
+
+Given a user query about a company, extract:
+1. The company name
+2. Any additional context about the company (location, industry, status, etc.)
+
+User query: {query}
+
+Return JSON with:
+- company_name: The name of the company (string)
+- context: Additional context about the company (string, can be empty if none provided)
+"""
+
 REACT_PROMPT = """
 You are a research assistant that helps consultants by gathering information about companies and producing comprehensive briefing notes.
 
@@ -53,6 +67,11 @@ Return JSON with:
 - action_input: The parameters for the agent/tool (as a dict)
 - is_complete: Boolean indicating if the task is complete
 """
+
+
+class QueryExtraction(BaseModel):
+    company_name: str
+    context: str
 
 
 class ReActStep(BaseModel):
@@ -209,25 +228,56 @@ class ResearchAssistant(OssBaseAgent):
         logger.error(error_msg)
         return {"error": error_msg}
     
+    async def _extract_company_info_from_query(self, query: str) -> QueryExtraction:
+        """
+        Extract company name and context from a natural language query.
+        
+        Args:
+            query: Natural language query about a company
+            
+        Returns:
+            QueryExtraction with company_name and context
+        """
+        logger.info(f"Extracting company info from query: {query}")
+        
+        prompt = QUERY_EXTRACTION_PROMPT.format(query=query)
+        
+        extraction = await self.generate(
+            input=prompt,
+            schema=QueryExtraction,
+            think=False,
+            temperature=0.1
+        )
+        
+        logger.info(f"Extracted company: {extraction.company_name}")
+        logger.info(f"Extracted context: {extraction.context}")
+        
+        return extraction
+    
     async def research_and_generate_briefing(
         self,
-        company_name: str,
-        context: str = "",
+        query: str,
         briefing_type: str = "executive_summary"
     ) -> BriefingOutput:
         """
         Research a company and generate a briefing using ReAct loop.
         
         Args:
-            company_name: Name of the company to research
-            context: Additional context about the company
+            query: Natural language query about the company to research
             briefing_type: Type of briefing to generate
             
         Returns:
             BriefingOutput with redacted briefing content
         """
-        logger.info(f"Starting research for company: {company_name}")
+        logger.info(f"Starting research for query: {query}")
         logger.info(f"Briefing type: {briefing_type}")
+        
+        extraction = await self._extract_company_info_from_query(query)
+        company_name = extraction.company_name
+        context = extraction.context
+        
+        logger.info(f"Researching company: {company_name}")
+        logger.info(f"With context: {context}")
         
         observations = []
         research_steps = []
@@ -368,18 +418,15 @@ if __name__ == "__main__":
         print("=" * 80)
         print()
         
-        company_name = "TechVentures Global"
-        context = "A technology company in the United States, San Francisco, operating in software and cloud services"
+        query = "Research TechVentures Global, a technology company in the United States, San Francisco, operating in software and cloud services"
         
-        print(f"Company: {company_name}")
-        print(f"Context: {context}")
+        print(f"Query: {query}")
         print()
         print("Starting research...")
         print()
         
         result = await assistant.research_and_generate_briefing(
-            company_name=company_name,
-            context=context,
+            query=query,
             briefing_type="due_diligence"
         )
         
