@@ -8,7 +8,7 @@ from utils.logger import Logger
 logger = Logger(__name__)
 
 PROMPT = """
-You are a document finder assistant. Your task is to select the correct company from a list of candidate companies based on the provided context.
+You are a company finder assistant. Your task is to select the correct company from a list of candidate companies based on the provided context.
 
 You will be given:
 1. A query name - the company name being searched for
@@ -62,9 +62,9 @@ class DocumentSelectionResult(BaseModel):
     index: Optional[int]
 
 
-class DocumentFinder(OssBaseAgent):
+class CompanyFinder(OssBaseAgent):
     def __init__(self, model_name: str, api_key: Optional[str] = None):
-        logger.info(f"Initializing DocumentFinder with model: {model_name}")
+        logger.info(f"Initializing CompanyFinder with model: {model_name}")
         super().__init__(model_name, api_key)
         self.database = []
         with open("database/simulated_companies_100.jsonl", "r") as f:
@@ -205,8 +205,8 @@ if __name__ == "__main__":
         logger.logger.setLevel(logger._get_log_level(log_level))
         logger.info(f"Log level set to: {log_level}")
         
-        # Initialize the document finder
-        finder = DocumentFinder(
+        # Initialize the company finder
+        finder = CompanyFinder(
             model_name="meta-llama/Llama-3.1-8B-Instruct",
         )
         
