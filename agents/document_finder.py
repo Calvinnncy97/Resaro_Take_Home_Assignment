@@ -42,19 +42,19 @@ class Headquarter(BaseModel):
     country: str
 
 class OutputCompanyInfo(BaseModel):
-    company_id: str
-    legal_name: str
-    trade_name: str
-    status: str
-    incorporation_country: str
-    industry: list[str]
-    headquarters: Headquarter
-    employee_band: str
-    revenue_band_usd: str
-    web_domain: str
-    risk_flags: list[str]
-    last_verified: str
-    source_systems: list[str]
+    company_id: Optional[str] = None
+    legal_name: Optional[str] = None
+    trade_name: Optional[str] = None
+    status: Optional[str] = None
+    incorporation_country: Optional[str] = None
+    industry: Optional[list[str]] = None
+    headquarters: Optional[Headquarter] = None
+    employee_band: Optional[str] = None
+    revenue_band_usd: Optional[str] = None
+    web_domain: Optional[str] = None
+    risk_flags: Optional[list[str]] = None
+    last_verified: Optional[str] = None
+    source_systems: Optional[list[str]] = None
 
 
 class DocumentSelectionResult(BaseModel):
@@ -143,7 +143,7 @@ class DocumentFinder(OssBaseAgent):
         
         if not top_candidates:
             logger.warning(f"No candidates found for query: '{query_name}'")
-            return None
+            return OutputCompanyInfo()
         
         logger.info(f"Found {len(top_candidates)} candidates, sending to LLM for selection")
         
@@ -178,7 +178,7 @@ class DocumentFinder(OssBaseAgent):
             # Return the selected company based on index, or None if no match
             if result.index is None:
                 logger.info(f"No matching company found for query: '{query_name}'")
-                return None
+                return OutputCompanyInfo()
             
             # Validate index is within range
             if 0 <= result.index < len(top_candidates):
