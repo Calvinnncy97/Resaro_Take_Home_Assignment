@@ -122,8 +122,8 @@ shall not be disclosed to third parties without prior written consent.
         result = await translator.translate(
             document_content=mock_document,
             source_language="English",
-            target_language="Spanish",
-            document_type="contract"
+            target_language="Chinese",
+            document_type="contract"    
         )
         
         print("=" * 80)
