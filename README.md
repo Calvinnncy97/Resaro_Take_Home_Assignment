@@ -71,10 +71,6 @@ pip install -r requirements.txt
 
 1. Create a `.env` file in the root directory:
 
-```bash
-cp .env.example .env  # If .env.example exists, otherwise create manually
-```
-
 2. Add your Hugging Face API token to the `.env` file:
 
 ```
