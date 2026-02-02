@@ -24,7 +24,6 @@ Return your response as a JSON object with the following fields:
 - translation_notes: Any important notes about the translation choices made
 
 Target Language: {target_language}
-Document Type: {document_type}
 
 Document Content:
 {document_content}
@@ -44,7 +43,7 @@ class DocumentTranslator(OssBaseAgent):
         document_content: str,
         target_language: str,
     ) -> DocumentTranslationOutput:
-        logger.info(f"Translating document from {source_language} to {target_language}")
+        logger.info(f"Translating document to {target_language}")
         logger.debug(f"Content length: {len(document_content)} characters")
         
         full_prompt = PROMPT.format(
@@ -119,8 +118,7 @@ shall not be disclosed to third parties without prior written consent.
         result = await translator.translate(
             document_content=mock_document,
             source_language="English",
-            target_language="Chinese",
-            document_type="contract"    
+            target_language="Chinese",  
         )
         
         print("=" * 80)

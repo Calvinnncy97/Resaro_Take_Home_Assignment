@@ -257,20 +257,17 @@ class ResearchAssistant(OssBaseAgent):
     async def research_and_generate_briefing(
         self,
         query: str,
-        briefing_type: str = "executive_summary"
     ) -> BriefingOutput:
         """
         Research a company and generate a briefing using ReAct loop.
         
         Args:
             query: Natural language query about the company to research
-            briefing_type: Type of briefing to generate
             
         Returns:
             BriefingOutput with redacted briefing content
         """
         logger.info(f"Starting research for query: {query}")
-        logger.info(f"Briefing type: {briefing_type}")
         
         extraction = await self._extract_company_info_from_query(query)
         company_name = extraction.company_name
@@ -312,8 +309,6 @@ class ResearchAssistant(OssBaseAgent):
                 logger.info(f"Reasoning: {step.reasoning}")
                 logger.info(f"Action: {step.action}")
                 
-                research_steps.append(f"Step {iteration + 1}: {step.reasoning}")
-                
                 if step.action == "FINISH" or step.is_complete:
                     logger.info("ReAct loop completed - FINISH action received")
                     break
@@ -343,7 +338,7 @@ class ResearchAssistant(OssBaseAgent):
             if company_profile:
                 logger.info("Generating briefing from company profile")
                 result = await self.briefing_generator.generate_briefing(
-                    company_profile, briefing_type
+                    company_profile
                 )
                 briefing_document = result.model_dump()
             else:
@@ -427,7 +422,6 @@ if __name__ == "__main__":
         
         result = await assistant.research_and_generate_briefing(
             query=query,
-            briefing_type="due_diligence"
         )
         
         print("=" * 80)
