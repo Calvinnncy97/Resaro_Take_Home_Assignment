@@ -83,14 +83,15 @@ class OssBaseAgent:
         schema: BaseModel,
         think: bool = True,
         temperature: Optional[float] = None,
+        max_tokens: int = 6144,
     ) -> BaseModel:
         async with _HF_GLOBAL_SEMAPHORE:
             if think:
                 raw_json = await self._generate_with_think(
-                    input, schema, temperature
+                    input, schema, temperature, max_tokens
                 )
             else:
-                raw_json = await self._generate_without_think(input, schema, temperature)
+                raw_json = await self._generate_without_think(input, schema, temperature, max_tokens)
 
             return self._parse_and_validate_json(raw_json, input, schema)
 
@@ -99,6 +100,7 @@ class OssBaseAgent:
         input_str: str,
         schema: BaseModel,
         temperature: Optional[float] = None,
+        max_tokens: int = 6144,
     ) -> str:
         if temperature is None:
             temperature = 0.6
@@ -116,12 +118,18 @@ class OssBaseAgent:
             },
         ]
 
-        response = await self.client.chat_completion(
-            messages=messages,
-            temperature=temperature,
-            top_p=0.95,
-            max_tokens=6144,
-        )
+        try:
+            response = await asyncio.wait_for(
+                self.client.chat_completion(
+                    messages=messages,
+                    temperature=temperature,
+                    top_p=0.95,
+                    max_tokens=max_tokens,
+                ),
+                timeout=120.0
+            )
+        except asyncio.TimeoutError:
+            raise TimeoutError(f"API call timed out after 120 seconds for model {self.model_name}")
         
         return response.choices[0].message.content
 
@@ -130,6 +138,7 @@ class OssBaseAgent:
         input_str: str,
         schema: BaseModel,
         temperature: Optional[float] = None,
+        max_tokens: int = 6144,
     ) -> str:
         if temperature is None:
             temperature = 0.7
@@ -146,12 +155,18 @@ class OssBaseAgent:
             },
         ]
 
-        response = await self.client.chat_completion(
-            messages=messages,
-            temperature=temperature,
-            top_p=0.8,
-            max_tokens=6144,
-        )
+        try:
+            response = await asyncio.wait_for(
+                self.client.chat_completion(
+                    messages=messages,
+                    temperature=temperature,
+                    top_p=0.8,
+                    max_tokens=max_tokens,
+                ),
+                timeout=120.0
+            )
+        except asyncio.TimeoutError:
+            raise TimeoutError(f"API call timed out after 120 seconds for model {self.model_name}")
         
         return response.choices[0].message.content
 
