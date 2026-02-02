@@ -95,7 +95,7 @@ def main():
         
         model_name = st.text_input(
             "Model Name",
-            value="meta-llama/Llama-3.1-8B-Instruct",
+            value="Qwen/Qwen3-8B",
             help="The LLM model to use for research"
         )
         
